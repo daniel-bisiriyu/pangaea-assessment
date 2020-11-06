@@ -35,7 +35,7 @@
           <li class="nav-item">
             <a href="#">Account</a>
           </li>
-          <li>
+          <li class="cursor-pointer" @click="$emit('show-cart')">
             <img
               src="@/assets/images/cart-icon.png"
               alt="Cart Icon"

@@ -12,4 +12,8 @@
 .cursor-pointer {
   cursor: pointer;
 }
+button:focus,
+select:focus {
+  outline: none;
+}
 </style>

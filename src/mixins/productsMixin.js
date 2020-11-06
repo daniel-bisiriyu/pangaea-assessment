@@ -14,11 +14,6 @@ export const productsMixin = {
             title
             image_url
             price(currency: ${this.currency})
-            product_options {
-              title
-              prefix
-              suffix
-            }
           }
         }
       `;

@@ -7,7 +7,7 @@
       <div>
         <p
           class="remove-cart-item-button cursor-pointer"
-          @click="$emit('remove-cart-item', product.id)"
+          @click="removeCartItem(product.id)"
         >
           X
         </p>
@@ -42,11 +42,15 @@ export default {
       this.$emit("increase-product-quantity", productId);
     },
     decreaseProductQuantity(productId) {
-      if (product.quantity == 1) {
-        this.$emit("remove-cart-item", productId);
+      console.log("remove cart item");
+      if (this.product.quantity == 1) {
+        this.$store.dispatch("removeCartItem", productId);
       } else {
         this.$emit("decrease-product-quantity", productId);
       }
+    },
+    removeCartItem(productId) {
+      this.$store.dispatch("removeCartItem", productId);
     },
   },
 };

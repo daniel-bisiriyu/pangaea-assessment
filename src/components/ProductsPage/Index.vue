@@ -1,6 +1,9 @@
 <template>
   <div class="products-page">
-    <app-navbar :cartItemsCount="cartItems.length" />
+    <app-navbar
+      :cartItemsCount="cartItems.length"
+      @show-cart="displayCart = true"
+    />
     <div class="products-wrapper">
       <div class="products-header">
         <div class="container">
@@ -42,11 +45,9 @@
     <product-cart
       :displayCart="displayCart"
       @close-cart="displayCart = false"
-      :cartItems="cartItems"
       :currency="currency"
       @remove-cart-item="removeCartItem($event)"
-      @increase-product-quantity="increaseProductQuantity($event)"
-      @decrease-product-quantity="decreaseProductQuantity($event)"
+      @change-currency="changeCurrency($event)"
     />
   </div>
 </template>
@@ -54,6 +55,7 @@
 <script>
 import AppNavbar from "../Layouts/Navbar";
 import { productsMixin } from "@/mixins/productsMixin";
+import { currencyMixin } from "@/mixins/currencyMixin";
 import ProductCart from "../ProductCart/Index";
 export default {
   components: {
@@ -62,31 +64,56 @@ export default {
   },
   data() {
     return {
-      products: [],
+      // products: [],
       displayCart: false,
-      cartItems: [],
       indexOfItemInCart: null,
+      updateCartCurrency: false,
     };
   },
-  mixins: [productsMixin],
+  computed: {
+    products() {
+      return this.$store.getters.allProducts;
+    },
+    cartItems() {
+      return this.$store.getters.cartItems;
+    },
+  },
+  mixins: [productsMixin, currencyMixin],
   mounted() {
     this.saveProducts();
+    this.saveCurrencies();
   },
   methods: {
     async saveProducts() {
       const response = await this.getProducts();
       console.log(response);
-      this.products = response.data.products;
+      this.$store.dispatch("saveAllProducts", response.data.products);
+      if (this.updateCartCurrency) {
+        this.$store.dispatch("updateCartItemsCurrency", this.selectedCurrency);
+      }
+      this.updateCartCurrency = false;
+    },
+    async saveCurrencies() {
+      const response = await this.getCurrencies();
+      console.log("currencies");
+      console.log(response);
+      this.$store.dispatch("saveAllCurrencies", response.data.currency);
+    },
+    async changeCurrency(currency) {
+      this.currency = currency;
+      this.updateCartCurrency = true;
+      this.saveProducts();
     },
     addToCart(product) {
       let productIsInCart = this.productInCart(product.id);
       if (productIsInCart) {
-        this.cartItems[this.indexOfItemInCart].quantity++;
+        this.$store.dispatch(
+          "incrementProductQuantity",
+          this.indexOfItemInCart
+        );
         this.displayCart = true;
-        this.indexOfItemInCart = null;
       } else {
-        product.quantity = 1;
-        this.cartItems.push(product);
+        this.$store.dispatch("saveItemToCart", product);
         this.displayCart = true;
       }
     },
@@ -98,20 +125,6 @@ export default {
         }
       }
       return false;
-    },
-    removeCartItem(productId) {
-      let filteredCart = this.cartItems.filter((item) => {
-        return item.id != productId;
-      });
-      this.cartItems = filteredCart;
-    },
-    decreaseProductQuantity(productId) {
-      this.productInCart(productId);
-      this.cartItems[this.indexOfItemInCart].quantity--;
-    },
-    increaseProductQuantity(productId) {
-      this.productInCart(productId);
-      this.cartItems[this.indexOfItemInCart].quantity++;
     },
   },
 };

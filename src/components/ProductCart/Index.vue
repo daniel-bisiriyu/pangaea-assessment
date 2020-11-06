@@ -9,11 +9,18 @@
               <close-cart-icon />
             </div>
           </div>
-
           <div class="cart-header__text">
             <p>Your Cart</p>
           </div>
           <div></div>
+        </div>
+        <div class="currency-filter cursor-pointer mb-3">
+          <select v-model="selectedCurrency">
+            <option disabled value="">Select a currency</option>
+            <option v-for="(currency, index) in allCurrencies" :key="index">{{
+              currency
+            }}</option>
+          </select>
         </div>
         <div class="cart-items">
           <cart-item
@@ -22,19 +29,13 @@
             :product="product"
             :currency="currency"
             @remove-cart-item="removeCartItem($event)"
-            @increase-product-quantity="
-              $emit('increase-product-quantity', $event)
-            "
-            @decrease-product-quantity="
-              $emit('decrease-product-quantity', $event)
-            "
           />
         </div>
         <div class="cart-footer">
           <span class="hr"></span>
           <div class="cart-subtotal">
             <p>Subtotal</p>
-            <p>$29.00</p>
+            <p>{{ currency }} {{ cartTotal }}</p>
           </div>
           <div class="subscription-button-wrapper">
             <button class="button subscribe">
@@ -54,10 +55,35 @@
 import CloseCartIcon from "./CloseCartIconSvg";
 import CartItem from "./CartItem";
 export default {
-  props: { displayCart: Boolean, cartItems: Array, currency: String },
+  props: { displayCart: Boolean, currency: String },
   components: {
     CloseCartIcon,
     CartItem,
+  },
+  data() {
+    return {
+      selectedCurrency: null,
+    };
+  },
+  watch: {
+    selectedCurrency() {
+      this.$emit("change-currency", this.selectedCurrency);
+    },
+  },
+  computed: {
+    cartItems() {
+      return this.$store.getters.cartItems;
+    },
+    cartTotal() {
+      let total = 0;
+      this.$store.getters.cartItems.forEach((item) => {
+        total += item.price * item.quantity;
+      });
+      return total;
+    },
+    allCurrencies() {
+      return this.$store.getters.allCurrencies;
+    },
   },
   methods: {
     removeCartItem(productId) {
@@ -158,5 +184,10 @@ export default {
     transform: translateX(0);
     /* opacity: 0.5; */
   }
+}
+select {
+  width: 6rem;
+  height: 2rem;
+  border: none;
 }
 </style>
