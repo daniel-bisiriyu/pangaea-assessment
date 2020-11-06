@@ -1,6 +1,6 @@
 <template>
   <div class="products-page">
-    <app-navbar />
+    <app-navbar :cartItemsCount="cartItems.length" />
     <div class="products-wrapper">
       <div class="products-header">
         <div class="container">
@@ -31,16 +31,22 @@
               <p>From {{ currency }} {{ product.price }}</p>
             </div>
             <div class="add-to-cart">
-              <button class="add-to-cart__btn">Add to Cart</button>
+              <button class="add-to-cart__btn" @click="addToCart(product)">
+                Add to Cart
+              </button>
             </div>
           </div>
         </div>
       </div>
     </div>
     <product-cart
-      :displayCart="false"
+      :displayCart="displayCart"
       @close-cart="displayCart = false"
-      :cartProducts="cartProducts"
+      :cartItems="cartItems"
+      :currency="currency"
+      @remove-cart-item="removeCartItem($event)"
+      @increase-product-quantity="increaseProductQuantity($event)"
+      @decrease-product-quantity="decreaseProductQuantity($event)"
     />
   </div>
 </template>
@@ -49,16 +55,6 @@
 import AppNavbar from "../Layouts/Navbar";
 import { productsMixin } from "@/mixins/productsMixin";
 import ProductCart from "../ProductCart/Index";
-// import gql from "graphql-tag";
-// const GET_PRODUCTS = gql`
-//   query getProducts {
-//     products {
-//       id
-//       title
-//       image_url
-//     }
-//   }
-// `;
 export default {
   components: {
     AppNavbar,
@@ -68,14 +64,10 @@ export default {
     return {
       products: [],
       displayCart: false,
-      cartProducts: [],
+      cartItems: [],
+      indexOfItemInCart: null,
     };
   },
-  //   apollo: {
-  //     products: {
-  //       query: GET_PRODUCTS,
-  //     },
-  //   },
   mixins: [productsMixin],
   mounted() {
     this.saveProducts();
@@ -85,6 +77,41 @@ export default {
       const response = await this.getProducts();
       console.log(response);
       this.products = response.data.products;
+    },
+    addToCart(product) {
+      let productIsInCart = this.productInCart(product.id);
+      if (productIsInCart) {
+        this.cartItems[this.indexOfItemInCart].quantity++;
+        this.displayCart = true;
+        this.indexOfItemInCart = null;
+      } else {
+        product.quantity = 1;
+        this.cartItems.push(product);
+        this.displayCart = true;
+      }
+    },
+    productInCart(productId) {
+      for (var i = 0; i < this.cartItems.length; i++) {
+        if (this.cartItems[i].id == productId) {
+          this.indexOfItemInCart = i;
+          return true;
+        }
+      }
+      return false;
+    },
+    removeCartItem(productId) {
+      let filteredCart = this.cartItems.filter((item) => {
+        return item.id != productId;
+      });
+      this.cartItems = filteredCart;
+    },
+    decreaseProductQuantity(productId) {
+      this.productInCart(productId);
+      this.cartItems[this.indexOfItemInCart].quantity--;
+    },
+    increaseProductQuantity(productId) {
+      this.productInCart(productId);
+      this.cartItems[this.indexOfItemInCart].quantity++;
     },
   },
 };
@@ -108,6 +135,7 @@ export default {
 }
 .single-product {
   width: 33%;
+  margin-bottom: 3rem;
 }
 .add-to-cart__btn {
   background-color: #4b5548;
@@ -121,7 +149,7 @@ export default {
   transform: scale(1.02);
 }
 .product-img {
-  width: 8rem;
+  width: 10rem;
   height: 7rem;
   margin-bottom: 4rem;
 }

@@ -41,6 +41,7 @@
               alt="Cart Icon"
               class="img-fluid cart-icon"
             />
+            <p class="cart-item-count">{{ cartItemsCount }}</p>
           </li>
         </ul>
       </form>
@@ -51,6 +52,7 @@
 <script>
 export default {
   name: "AppNavbar",
+  props: ["cartItemsCount"],
 };
 </script>
 
@@ -67,6 +69,11 @@ export default {
 }
 .cart-icon {
   width: 2rem;
-  margin: 0 2rem;
+  margin: 0 0.5rem 0 2rem;
+}
+.cart-item-count {
+  margin-bottom: 0.75rem;
+  display: inline-block;
+  font-size: 1rem;
 }
 </style>

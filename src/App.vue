@@ -9,4 +9,7 @@
 * {
   font-family: "Playfair Display", serif;
 }
+.cursor-pointer {
+  cursor: pointer;
+}
 </style>

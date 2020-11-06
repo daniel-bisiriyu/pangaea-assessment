@@ -1,10 +1,10 @@
 <template>
   <div v-if="displayCart" class="product-cart">
     <div class="d-flex">
-      <div class="cart-overlay"></div>
+      <div class="cart-overlay" @click="$emit('close-cart')"></div>
       <div class="cart-content">
         <div class="cart-header text-center">
-          <div class="cart-toggle-wrapper">
+          <div class="cart-toggle-wrapper" @click="$emit('close-cart')">
             <div class="cart__close-cart-toggle">
               <close-cart-icon />
             </div>
@@ -17,9 +17,17 @@
         </div>
         <div class="cart-items">
           <cart-item
-            v-for="product in cartProducts"
+            v-for="product in cartItems"
             :key="product.id"
             :product="product"
+            :currency="currency"
+            @remove-cart-item="removeCartItem($event)"
+            @increase-product-quantity="
+              $emit('increase-product-quantity', $event)
+            "
+            @decrease-product-quantity="
+              $emit('decrease-product-quantity', $event)
+            "
           />
         </div>
         <div class="cart-footer">
@@ -46,10 +54,15 @@
 import CloseCartIcon from "./CloseCartIconSvg";
 import CartItem from "./CartItem";
 export default {
-  props: { displayCart: Boolean, cartProducts: Array },
+  props: { displayCart: Boolean, cartItems: Array, currency: String },
   components: {
     CloseCartIcon,
     CartItem,
+  },
+  methods: {
+    removeCartItem(productId) {
+      this.$emit("remove-cart-item", productId);
+    },
   },
 };
 </script>
@@ -68,6 +81,7 @@ export default {
 .cart-overlay {
   width: 60%;
   background: rgba(0, 0, 0, 0.4);
+  animation: slideInRight 0.5s linear;
 }
 .cart-content {
   position: relative;
@@ -75,6 +89,8 @@ export default {
   width: 40%;
   background: #f2f2f0;
   height: 100vh;
+  animation: slideInRight 0.5s linear;
+  overflow-y: auto;
 }
 .cart-header {
   display: flex;
@@ -95,12 +111,12 @@ export default {
   justify-content: center;
   cursor: pointer;
 }
-.cart-footer {
+/* .cart-footer {
   position: absolute;
   bottom: 1rem;
   right: 2rem;
   left: 2rem;
-}
+} */
 .cart-subtotal {
   display: flex;
   justify-content: space-between;
@@ -132,5 +148,15 @@ export default {
   height: 0.05rem;
   width: 100%;
   margin: 1rem 0;
+}
+@keyframes slideInRight {
+  0% {
+    transform: translateX(100%);
+    /* opacity: 0; */
+  }
+  100% {
+    transform: translateX(0);
+    /* opacity: 0.5; */
+  }
 }
 </style>

@@ -5,7 +5,12 @@
         <p>{{ product.title }}</p>
       </div>
       <div>
-        <p class="remove-cart-item-button">X</p>
+        <p
+          class="remove-cart-item-button cursor-pointer"
+          @click="$emit('remove-cart-item', product.id)"
+        >
+          X
+        </p>
       </div>
     </div>
     <div class="product-image-wrapper">
@@ -17,12 +22,12 @@
     </div>
     <div class="cart-item__bottom-row">
       <div class="quantity-selector">
-        <span>-</span>
-        <span>1</span>
-        <span>+</span>
+        <span @click="decreaseProductQuantity(product.id)">-</span>
+        <span>{{ product.quantity }}</span>
+        <span @click="increaseProductQuantity(product.id)">+</span>
       </div>
       <div class="product-price">
-        <p>$ {{ product.price }}</p>
+        <p>{{ currency }} {{ product.price * product.quantity }}</p>
       </div>
       <div></div>
     </div>
@@ -31,7 +36,19 @@
 
 <script>
 export default {
-  props: ["product"],
+  props: ["product", "currency"],
+  methods: {
+    increaseProductQuantity(productId) {
+      this.$emit("increase-product-quantity", productId);
+    },
+    decreaseProductQuantity(productId) {
+      if (product.quantity == 1) {
+        this.$emit("remove-cart-item", productId);
+      } else {
+        this.$emit("decrease-product-quantity", productId);
+      }
+    },
+  },
 };
 </script>
 
@@ -40,6 +57,7 @@ export default {
   background: #ffffff;
   border-radius: 3px;
   padding: 0.5rem 1rem 1.5rem;
+  margin-bottom: 1rem;
 }
 .cart-item-header {
   display: flex;
@@ -56,6 +74,9 @@ export default {
   align-items: center;
   padding: 0.25rem;
   border: 0.5px solid #bcbcbc;
+}
+.quantity-selector span {
+  cursor: pointer;
 }
 .cart-item__bottom-row {
   display: flex;
