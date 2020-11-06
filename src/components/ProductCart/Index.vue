@@ -3,33 +3,41 @@
     <div class="d-flex">
       <div class="cart-overlay" @click="$emit('close-cart')"></div>
       <div class="cart-content">
-        <div class="cart-header text-center">
-          <div class="cart-toggle-wrapper" @click="$emit('close-cart')">
-            <div class="cart__close-cart-toggle">
-              <close-cart-icon />
+        <div>
+          <div class="cart-header text-center">
+            <div class="cart-toggle-wrapper" @click="$emit('close-cart')">
+              <div class="cart__close-cart-toggle">
+                <close-cart-icon />
+              </div>
             </div>
+            <div class="cart-header__text">
+              <p>Your Cart</p>
+            </div>
+            <div></div>
           </div>
-          <div class="cart-header__text">
-            <p>Your Cart</p>
+          <div class="currency-filter cursor-pointer mb-3">
+            <select v-model="selectedCurrency">
+              <option disabled value="">Select a currency</option>
+              <option v-for="(currency, index) in allCurrencies" :key="index">{{
+                currency
+              }}</option>
+            </select>
           </div>
-          <div></div>
-        </div>
-        <div class="currency-filter cursor-pointer mb-3">
-          <select v-model="selectedCurrency">
-            <option disabled value="">Select a currency</option>
-            <option v-for="(currency, index) in allCurrencies" :key="index">{{
-              currency
-            }}</option>
-          </select>
-        </div>
-        <div class="cart-items">
-          <cart-item
-            v-for="product in cartItems"
-            :key="product.id"
-            :product="product"
-            :currency="currency"
-            @remove-cart-item="removeCartItem($event)"
-          />
+          <div class="cart-items">
+            <cart-item
+              v-for="product in cartItems"
+              :key="product.id"
+              :product="product"
+              :currency="currency"
+              @remove-cart-item="removeCartItem($event)"
+              @increase-product-quantity="
+                $emit('increase-product-quantity', $event)
+              "
+              @decrease-product-quantity="
+                $emit('decrease-product-quantity', $event)
+              "
+            />
+          </div>
         </div>
         <div class="cart-footer">
           <span class="hr"></span>
@@ -110,13 +118,16 @@ export default {
   animation: slideInRight 0.5s linear;
 }
 .cart-content {
-  position: relative;
+  /* position: relative; */
   padding: 1rem 1.5rem;
   width: 40%;
   background: #f2f2f0;
   height: 100vh;
   animation: slideInRight 0.5s linear;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 .cart-header {
   display: flex;
@@ -137,12 +148,13 @@ export default {
   justify-content: center;
   cursor: pointer;
 }
-/* .cart-footer {
-  position: absolute;
+.cart-footer {
+  justify-self: flex-end;
+  /* position: absolute;
   bottom: 1rem;
   right: 2rem;
-  left: 2rem;
-} */
+  left: 2rem; */
+}
 .cart-subtotal {
   display: flex;
   justify-content: space-between;

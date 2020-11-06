@@ -48,6 +48,8 @@
       :currency="currency"
       @remove-cart-item="removeCartItem($event)"
       @change-currency="changeCurrency($event)"
+      @increase-product-quantity="increaseProductQuantity($event)"
+      @decrease-product-quantity="decreaseProductQuantity($event)"
     />
   </div>
 </template>
@@ -125,6 +127,23 @@ export default {
         }
       }
       return false;
+    },
+    decreaseProductQuantity(productId) {
+      this.productInCart(productId);
+      console.log("remove item");
+      if (this.cartItems[this.indexOfItemInCart].quantity == 1) {
+        this.$store.dispatch("removeCartItem", productId);
+      } else {
+        this.$store.dispatch(
+          "decrementProductQuantity",
+          this.indexOfItemInCart
+        );
+      }
+    },
+    increaseProductQuantity(productId) {
+      this.productInCart(productId);
+      this.$store.dispatch("incrementProductQuantity", this.indexOfItemInCart);
+      console.log("increase quantity called");
     },
   },
 };
