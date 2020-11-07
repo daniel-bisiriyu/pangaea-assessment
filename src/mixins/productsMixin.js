@@ -2,7 +2,7 @@ import { gql } from "apollo-boost";
 export const productsMixin = {
   data() {
     return {
-      currency: "NGN",
+      currency: "USD",
     };
   },
   methods: {

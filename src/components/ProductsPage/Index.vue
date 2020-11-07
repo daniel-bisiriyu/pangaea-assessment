@@ -35,7 +35,11 @@
             </div>
             <div class="product-information">
               <p class="product-title">{{ product.title }}</p>
-              <p>From {{ currency }} {{ product.price }}</p>
+              <p>
+                From <span v-if="currency == 'USD'">$</span>
+                <span v-else>{{ currency }}</span
+                >{{ product.price }}
+              </p>
             </div>
             <div class="add-to-cart">
               <button class="add-to-cart__btn" @click="addToCart(product)">

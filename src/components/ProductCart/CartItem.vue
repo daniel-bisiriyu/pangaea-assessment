@@ -27,7 +27,11 @@
         <span @click="increaseProductQuantity(product.id)">+</span>
       </div>
       <div class="product-price">
-        <p>{{ currency }} {{ product.price * product.quantity }}</p>
+        <p>
+          <span v-if="currency == 'USD'">$</span>
+          <span v-else>{{ currency }}</span>
+          {{ product.price * product.quantity }}
+        </p>
       </div>
       <div></div>
     </div>
