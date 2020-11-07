@@ -94,7 +94,6 @@ export default {
   methods: {
     async saveProducts() {
       const response = await this.getProducts();
-      console.log(response);
       this.$store.dispatch("saveAllProducts", response.data.products);
       if (this.updateCartCurrency) {
         this.$store.dispatch("updateCartItemsCurrency", this.selectedCurrency);
@@ -103,8 +102,6 @@ export default {
     },
     async saveCurrencies() {
       const response = await this.getCurrencies();
-      console.log("currencies");
-      console.log(response);
       this.$store.dispatch("saveAllCurrencies", response.data.currency);
     },
     async changeCurrency(currency) {
@@ -113,7 +110,7 @@ export default {
       this.saveProducts();
     },
     addToCart(product) {
-      let productIsInCart = this.productInCart(product.id);
+      let productIsInCart = this.isProductInCart(product.id);
       if (productIsInCart) {
         this.$store.dispatch(
           "incrementProductQuantity",
@@ -125,7 +122,7 @@ export default {
         this.displayCart = true;
       }
     },
-    productInCart(productId) {
+    isProductInCart(productId) {
       for (var i = 0; i < this.cartItems.length; i++) {
         if (this.cartItems[i].id == productId) {
           this.indexOfItemInCart = i;
@@ -135,8 +132,7 @@ export default {
       return false;
     },
     decreaseProductQuantity(productId) {
-      this.productInCart(productId);
-      console.log("remove item");
+      this.isProductInCart(productId);
       if (this.cartItems[this.indexOfItemInCart].quantity == 1) {
         this.$store.dispatch("removeCartItem", productId);
       } else {
@@ -147,9 +143,8 @@ export default {
       }
     },
     increaseProductQuantity(productId) {
-      this.productInCart(productId);
+      this.isProductInCart(productId);
       this.$store.dispatch("incrementProductQuantity", this.indexOfItemInCart);
-      console.log("increase quantity called");
     },
   },
 };

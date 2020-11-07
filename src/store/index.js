@@ -67,7 +67,6 @@ export default new Vuex.Store({
         let product = state.allProducts.filter((product) => {
           return product.id == item.id;
         });
-        console.log(product);
         item.price = product[0].price;
       });
     },

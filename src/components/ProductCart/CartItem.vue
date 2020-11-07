@@ -42,7 +42,6 @@ export default {
       this.$emit("increase-product-quantity", productId);
     },
     decreaseProductQuantity(productId) {
-      console.log("remove cart item");
       if (this.product.quantity == 1) {
         this.$store.dispatch("removeCartItem", productId);
       } else {
