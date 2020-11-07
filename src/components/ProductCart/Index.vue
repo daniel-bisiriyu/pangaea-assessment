@@ -24,6 +24,9 @@
             </select>
           </div>
           <div class="cart-items">
+            <div class="text-center" v-if="cartItems.length == 0">
+              <p>Your cart is currently empty</p>
+            </div>
             <cart-item
               v-for="product in cartItems"
               :key="product.id"
@@ -115,7 +118,7 @@ export default {
 .cart-overlay {
   width: 60%;
   background: rgba(0, 0, 0, 0.4);
-  animation: slideInRight 0.5s linear;
+  animation: fadeIn 1s linear;
 }
 .cart-content {
   /* position: relative; */
@@ -123,7 +126,7 @@ export default {
   width: 40%;
   background: #f2f2f0;
   height: 100vh;
-  animation: slideInRight 0.5s linear;
+  animation: slideInRight 0.3s cubic-bezier(0.17, 0.67, 0.83, 0.67);
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -150,10 +153,6 @@ export default {
 }
 .cart-footer {
   justify-self: flex-end;
-  /* position: absolute;
-  bottom: 1rem;
-  right: 2rem;
-  left: 2rem; */
 }
 .cart-subtotal {
   display: flex;
@@ -187,6 +186,19 @@ export default {
   width: 100%;
   margin: 1rem 0;
 }
+@keyframes fadeIn {
+  0% {
+    transform: opacity(0);
+    /* opacity: 0; */
+  }
+  50% {
+    transform: opacity(0.5);
+  }
+  100% {
+    transform: opacity(1);
+    /* opacity: 0.5; */
+  }
+}
 @keyframes slideInRight {
   0% {
     transform: translateX(100%);
@@ -201,5 +213,25 @@ select {
   width: 6rem;
   height: 2rem;
   border: none;
+}
+.cart-content::-webkit-scrollbar {
+  width: 0.1px;
+}
+.cart-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.cart-content::-webkit-scrollbar-thumb {
+  background: #888;
+}
+.cart-content::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+@media screen and (max-width: 768px) {
+  .cart-overlay {
+    display: none;
+  }
+  .cart-content {
+    width: 100%;
+  }
 }
 </style>

@@ -16,6 +16,10 @@
         </div>
       </div>
       <div class="products-list-wrapper">
+        <div class="text-center loading-area" v-if="products.length == 0">
+          <loader />
+        </div>
+
         <div class="products-list">
           <div
             class="single-product text-center mb-5"
@@ -59,10 +63,12 @@ import AppNavbar from "../Layouts/Navbar";
 import { productsMixin } from "@/mixins/productsMixin";
 import { currencyMixin } from "@/mixins/currencyMixin";
 import ProductCart from "../ProductCart/Index";
+import Loader from "../Loader";
 export default {
   components: {
     AppNavbar,
     ProductCart,
+    Loader,
   },
   data() {
     return {
@@ -156,6 +162,7 @@ export default {
 .products-list-wrapper {
   background: #e1e6e2;
   padding: 3rem 0;
+  min-height: 25rem;
 }
 .products-list {
   width: 90%;
@@ -173,12 +180,15 @@ export default {
   background-color: #4b5548;
   border: none;
   color: #fff;
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem 2rem;
   border-radius: 1px;
   transition: all ease 0.5s;
 }
 .add-to-cart__btn:hover {
-  transform: scale(1.02);
+  background: #232622;
+}
+.add-to-cart__btn:focus {
+  outline: none;
 }
 .product-img {
   width: 10rem;
@@ -189,9 +199,16 @@ export default {
   font-size: 0.9rem;
   margin-bottom: 0;
 }
+.loading-area {
+  padding-top: 7rem;
+}
 @media screen and (max-width: 768px) {
   .single-product {
     width: 50%;
+  }
+  .product-img {
+    width: 5rem;
+    height: 3.5rem;
   }
 }
 </style>
